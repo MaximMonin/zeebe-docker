@@ -1,0 +1,207 @@
+version: "2"
+
+networks:
+  zeebe_network:
+    driver: bridge
+
+services:
+  gateway:
+    container_name: zeebe-gateway
+    image: camunda/zeebe:0.24.2
+    restart: always
+    depends_on:
+      - node0
+    environment:
+      - ZEEBE_LOG_LEVEL=debug
+      - ZEEBE_STANDALONE_GATEWAY=true
+      - ZEEBE_GATEWAY_NETWORK_HOST=0.0.0.0
+      - ZEEBE_GATEWAY_NETWORK_PORT=26500
+      - ZEEBE_GATEWAY_CLUSTER_CONTACTPOINT=node0:26502
+      - ZEEBE_GATEWAY_CLUSTER_PORT=26502
+      - ZEEBE_GATEWAY_CLUSTER_HOST=gateway
+      - ZEEBE_GATEWAY_SECURITY_ENABLED=false
+      - ZEEBE_GATEWAY_LONGPOLLING_ENABLED=true
+    ports:
+      - "26500:26500"
+    networks:
+      - zeebe_network
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+
+  node0:
+    container_name: zeebe-broker-1
+    image: camunda/zeebe:0.24.2
+    restart: always
+    depends_on:
+      - hazelcast
+    environment:
+      - ZEEBE_LOG_LEVEL=debug
+      - ZEEBE_BROKER_CLUSTER_NODEID=0
+      - ZEEBE_BROKER_GATEWAY_CLUSTER_HOST=gateway
+      - ZEEBE_HAZELCAST_REMOTE_ADDRESS=hazelcast:5701
+    networks:
+      - zeebe_network
+    volumes:
+      - ./zeebe/node0:/usr/local/zeebe/data
+      - ./cfg/zeebe-hazelcast-exporter.jar:/usr/local/zeebe/exporters/zeebe-hazelcast-exporter.jar
+      - ./cfg/application.yaml:/usr/local/zeebe/config/application.yaml
+      - /etc/localtime:/etc/localtime:ro
+
+  node1:
+    container_name: zeebe-broker-2
+    image: camunda/zeebe:0.24.2
+    restart: always
+    environment:
+      - ZEEBE_LOG_LEVEL=debug
+      - ZEEBE_BROKER_CLUSTER_NODEID=1
+      - ZEEBE_BROKER_GATEWAY_CLUSTER_HOST=gateway
+      - ZEEBE_HAZELCAST_REMOTE_ADDRESS=hazelcast:5701
+    networks:
+      - zeebe_network
+    depends_on:
+      - node0
+    volumes:
+      - ./zeebe/node1:/usr/local/zeebe/data
+      - ./cfg/zeebe-hazelcast-exporter.jar:/usr/local/zeebe/exporters/zeebe-hazelcast-exporter.jar
+      - ./cfg/application.yaml:/usr/local/zeebe/config/application.yaml
+      - /etc/localtime:/etc/localtime:ro
+
+  node2:
+    container_name: zeebe-broker-3
+    image: camunda/zeebe:0.24.2
+    restart: always
+    environment:
+      - ZEEBE_LOG_LEVEL=debug
+      - ZEEBE_BROKER_CLUSTER_NODEID=2
+      - ZEEBE_BROKER_GATEWAY_CLUSTER_HOST=gateway
+      - ZEEBE_HAZELCAST_REMOTE_ADDRESS=hazelcast:5701
+    networks:
+      - zeebe_network
+    depends_on:
+      - node1
+    volumes:
+      - ./zeebe/node2:/usr/local/zeebe/data
+      - ./cfg/zeebe-hazelcast-exporter.jar:/usr/local/zeebe/exporters/zeebe-hazelcast-exporter.jar
+      - ./cfg/application.yaml:/usr/local/zeebe/config/application.yaml
+      - /etc/localtime:/etc/localtime:ro
+
+  operate:
+    container_name: zeebe-operate
+    image: camunda/operate:0.24.2
+    restart: always
+    ports:
+      - "2590:8080"
+    depends_on:
+      - node0
+      - elasticsearch
+    volumes:
+      - ./cfg/operate-application.yml:/usr/local/operate/config/application.yml
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - zeebe_network
+
+  elasticsearch:
+    image: elasticsearch:6.8.12
+    restart: always
+    container_name: zeebe-search
+    environment:
+      - discovery.type=single-node
+      - cluster.routing.allocation.disk.threshold_enabled=false
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./cfg/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./elastic:/usr/share/elasticsearch/data
+      - /etc/localtime:/etc/localtime:ro
+    expose:
+      - 9200
+    networks:
+      - zeebe_network
+
+  kibana:
+    image: kibana:6.8.12
+    restart: always
+    container_name: zeebe-kibana
+    networks:
+      - zeebe_network
+    volumes:
+      - ./cfg/kibana.yml:/usr/share/kibana/config/kibana.yml
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+     - "2591:5601"
+
+  monitor:
+    container_name: zeebe-monitor
+    restart: always
+    image: camunda/zeebe-simple-monitor:0.19.1
+    environment:
+      - zeebe.client.worker.hazelcast.connection=hazelcast:5701
+      - zeebe.client.broker.contactPoint=gateway:26500
+      - zeebe.client.security.plaintext=true
+      - spring.datasource.url=jdbc:postgresql://db:5432/zeebe
+      - spring.datasource.username=zeebe
+      - spring.datasource.password=zeebe
+      - spring.datasource.driverClassName=org.postgresql.Driver
+      - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+      - server.port=8082
+    ports:
+      - "2592:8082"
+    depends_on:
+      - node0
+    networks:
+      - zeebe_network
+    volumes:
+      - ./cfg/postgresql-42.2.16.jar:/app/libs/postgresql-42.2.16.jar
+      - /etc/localtime:/etc/localtime:ro
+
+
+  hazelcast:
+    container_name: zeebe-hazelcast
+    image: hazelcast/hazelcast:4.0.2
+    expose:
+      - 5701
+    mem_limit: 2g
+    environment:
+      - JAVA_OPTS="-Dhazelcast.local.publicAddress=hazelcast:5701"
+    networks:
+      - zeebe_network
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+ 
+  db:
+    container_name: zeebe-db
+    image: postgres:12.3
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./db:/var/lib/postgresql/data
+      - ./cfg/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - zeebe_network
+
+  pgadmin:
+    image: dpage/pgadmin4:4.26
+    container_name: zeebe-pgadmin
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "2593:80"
+    networks:
+      - zeebe_network
+    volumes:
+      - ./cfg/servers.json:/pgadmin4/servers.json
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@postgres
+      - PGADMIN_DEFAULT_PASSWORD=postgres
+      - PGADMIN_SERVER_JSON_FILE=/pgadmin4/servers.json
+
