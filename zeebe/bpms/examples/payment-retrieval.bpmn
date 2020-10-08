@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0ypo27m" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Zeebe Modeler" exporterVersion="0.10.0">
+  <bpmn:process id="payment-retrieval" name="Снятие денег" isExecutable="true" camunda:historyTimeToLive="60">
+    <bpmn:startEvent id="StartEvent_1" name="Запрос на оплату">
+      <bpmn:outgoing>Flow_1jf65ng</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1jf65ng" sourceRef="StartEvent_1" targetRef="generate" />
+    <bpmn:serviceTask id="Activity_1xytz6s" name="Снять деньги с карты" camunda:type="external" camunda:topic="charge-card">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="charge-card" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_03ohmj4</bpmn:incoming>
+      <bpmn:outgoing>Flow_1x4x0wm</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_payment_done" name="Оплата получена">
+      <bpmn:incoming>Flow_1x4x0wm</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1x4x0wm" sourceRef="Activity_1xytz6s" targetRef="Event_payment_done" />
+    <bpmn:sequenceFlow id="Flow_0mpi2xp" sourceRef="generate" targetRef="Gateway_19wpozq" />
+    <bpmn:exclusiveGateway id="Gateway_19wpozq">
+      <bpmn:incoming>Flow_0mpi2xp</bpmn:incoming>
+      <bpmn:outgoing>Flow_03ohmj4</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0lfa0vq</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_03ohmj4" name="&#60; 800" sourceRef="Gateway_19wpozq" targetRef="Activity_1xytz6s">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= amount &lt; 800</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0lfa0vq" name="&#62;= 800" sourceRef="Gateway_19wpozq" targetRef="Activity_02pjjyc">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= amount &gt;= 800</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_payment_done_premium" name="Премиум оплата получена">
+      <bpmn:incoming>Flow_1rk9h1b</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1rk9h1b" sourceRef="Activity_02pjjyc" targetRef="Event_payment_done_premium" />
+    <bpmn:serviceTask id="Activity_02pjjyc" name="Премиум снятие денег" camunda:type="external" camunda:topic="charge-card-premium">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="charge-card-premium" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0lfa0vq</bpmn:incoming>
+      <bpmn:outgoing>Flow_1rk9h1b</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="generate" name="Генератор">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="generate-item-amount" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1jf65ng</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mpi2xp</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="payment-retrieval">
+      <bpmndi:BPMNEdge id="Flow_1rk9h1b_di" bpmnElement="Flow_1rk9h1b">
+        <di:waypoint x="810" y="230" />
+        <di:waypoint x="932" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lfa0vq_di" bpmnElement="Flow_0lfa0vq">
+        <di:waypoint x="440" y="142" />
+        <di:waypoint x="440" y="230" />
+        <di:waypoint x="710" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="452" y="183" width="35" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03ohmj4_di" bpmnElement="Flow_03ohmj4">
+        <di:waypoint x="465" y="117" />
+        <di:waypoint x="710" y="117" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="576" y="99" width="28" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mpi2xp_di" bpmnElement="Flow_0mpi2xp">
+        <di:waypoint x="360" y="117" />
+        <di:waypoint x="415" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1x4x0wm_di" bpmnElement="Flow_1x4x0wm">
+        <di:waypoint x="810" y="117" />
+        <di:waypoint x="932" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jf65ng_di" bpmnElement="Flow_1jf65ng">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="260" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="172" y="142" width="52" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0s4exbd_di" bpmnElement="Activity_1xytz6s">
+        <dc:Bounds x="710" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1co56v5_di" bpmnElement="Event_payment_done">
+        <dc:Bounds x="932" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="906" y="142" width="89" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_19wpozq_di" bpmnElement="Gateway_19wpozq" isMarkerVisible="true">
+        <dc:Bounds x="415" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_09zmawb_di" bpmnElement="Event_payment_done_premium">
+        <dc:Bounds x="932" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="907" y="255" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1onwivo_di" bpmnElement="Activity_02pjjyc">
+        <dc:Bounds x="710" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0f5a0hn_di" bpmnElement="generate">
+        <dc:Bounds x="260" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
