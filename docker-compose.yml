@@ -85,6 +85,23 @@ services:
       - ./cfg/application.yaml:/usr/local/zeebe/config/application.yaml
       - /etc/localtime:/etc/localtime:ro
 
+  worker-node:
+    image: maximmonin/zeebe-worker-node
+    container_name: zeebe-worker-node
+    restart: always
+    depends_on:
+      - gateway
+    networks:
+      - zeebe_network
+    environment:
+      - ZeebeUrl='gateway:26500'
+      - ResponseTimeout=5000
+      - TelegramBot
+      - TelegramChannel
+    volumes:
+      - ./workers/node/payment-retrieval.js:/app/server.js
+      - /etc/localtime:/etc/localtime:ro
+
   operate:
     container_name: zeebe-operate
     image: camunda/operate:0.24.2
