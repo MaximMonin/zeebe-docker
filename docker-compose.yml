@@ -21,6 +21,7 @@ services:
       - ZEEBE_GATEWAY_CLUSTER_HOST=gateway
       - ZEEBE_GATEWAY_SECURITY_ENABLED=false
       - ZEEBE_GATEWAY_LONGPOLLING_ENABLED=true
+      - ZEEBE_BROKER_GATEWAY_SECURITY_ENABLED=false
     ports:
       - "26500:26500"
     networks:
