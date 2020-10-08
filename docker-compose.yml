@@ -27,6 +27,7 @@ services:
     networks:
       - zeebe_network
     volumes:
+      - ./zeebe/test.sh:/test.sh
       - /etc/localtime:/etc/localtime:ro
 
   node0:
@@ -177,7 +178,6 @@ services:
     volumes:
       - ./cfg/postgresql-42.2.16.jar:/app/libs/postgresql-42.2.16.jar
       - /etc/localtime:/etc/localtime:ro
-
 
   hazelcast:
     container_name: zeebe-hazelcast
