@@ -95,7 +95,11 @@ services:
       - gateway
     networks:
       - zeebe_network
+    ports:
+      # rest api
+      - "2595:3000"
     environment:
+      - LogLevel=INFO
       - ZeebeUrl='gateway:26500'
       - ResponseTimeout=5000
       - TelegramBot
