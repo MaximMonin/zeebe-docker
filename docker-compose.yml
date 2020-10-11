@@ -99,7 +99,7 @@ services:
       - "2595:3000"
     environment:
       - LogLevel=INFO
-      - ZeebeUrl='gateway:26500'
+      - ZeebeUrl=gateway:26500
       - ResponseTimeout=5000
       - TaskType=ServiceTask
       - TelegramBot

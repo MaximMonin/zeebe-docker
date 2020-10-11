@@ -2,7 +2,7 @@ const { ZBClient, Duration } = require('zeebe-node');
 const express = require('express');
 const { router } = require ('./js/router.js');
 
-const url = process.env.ZeebeURL || 'gateway:26500';
+const url = process.env.ZeebeUrl || 'gateway:26500';
 const timeout = process.env.ResponseTimeout || 10000;
 const loglevel = process.env.LogLevel || 'INFO';
 const tasktype = process.env.TaskType || 'ServiceTask';
@@ -49,9 +49,16 @@ Object.keys(signals).forEach((signal) => {
 });
 
 async function main() {
+  try {
+    const res = await client.topology()
+    console.log(JSON.stringify(res, null, 2))
+  } 
+  catch (e) {
+    console.error(e)
+  }
   const zbWorker1 = client.createWorker({
     taskType: tasktype,
-    taskHandler: handler,
+    taskHandler: router,
     failWorkflowOnException: false,
     maxJobsToActivate: 200,
     timeout: timeout,
@@ -77,10 +84,6 @@ async function startWorkflow (req, res) {
   );
   var obj = {workflowInstanceKey: workflowInstanceKey};
   res.status(200).end(JSON.stringify(obj));
-}
-
-async function handler(task, complete, worker) {
-  await router(task, complete, worker);
 }
 
 main ();

@@ -1,18 +1,18 @@
 const { paymentretrieval } = require ('./paymentretrieval.js');
 
-function router(task, complete, worker) {
+async function router(task, complete, worker) {
   const { workflowInstanceKey, bpmnProcessId, elementId } = task;
 
 /*  console.log (JSON.stringify(task)); */
 
   switch (bpmnProcessId) {
   case 'payment-retrieval':
-    paymentretrieval(task, complete, worker);
+    await paymentretrieval(task, complete, worker);
     break;
   default:
     {
       console.log('Unknown ProcessId ' + bpmnProcessId);
-      complete.failure('Unknown ProcessId ' + bpmnProcessId, 0);
+      await complete.failure('Unknown ProcessId ' + bpmnProcessId, 0);
     }
   }
 };
