@@ -40,12 +40,12 @@ services:
       - ZEEBE_LOG_LEVEL=debug
       - ZEEBE_BROKER_CLUSTER_NODEID=0
       - ZEEBE_BROKER_GATEWAY_CLUSTER_HOST=gateway
-      - ZEEBE_HAZELCAST_REMOTE_ADDRESS=hazelcast:5701
+#      - ZEEBE_HAZELCAST_REMOTE_ADDRESS=hazelcast:5701
     networks:
       - zeebe_network
     volumes:
       - ./zeebe/node0:/usr/local/zeebe/data
-      - ./cfg/zeebe-hazelcast-exporter.jar:/usr/local/zeebe/exporters/zeebe-hazelcast-exporter.jar
+#      - ./cfg/zeebe-hazelcast-exporter.jar:/usr/local/zeebe/exporters/zeebe-hazelcast-exporter.jar
       - ./cfg/application.yaml:/usr/local/zeebe/config/application.yaml
       - /etc/localtime:/etc/localtime:ro
 
