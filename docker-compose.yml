@@ -101,10 +101,12 @@ services:
       - LogLevel=INFO
       - ZeebeUrl='gateway:26500'
       - ResponseTimeout=5000
+      - TaskType=ServiceTask
       - TelegramBot
       - TelegramChannel
     volumes:
-      - ./workers/node/payment-retrieval.js:/app/server.js
+      - ./workers/node/server.js:/app/server.js
+      - ./workers/js:/app/js
       - /etc/localtime:/etc/localtime:ro
 
   operate:
