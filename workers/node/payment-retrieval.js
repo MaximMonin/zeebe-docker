@@ -86,34 +86,35 @@ async function startWorkflow (req, res) {
 
 main ();
 
-function handler(task, complete, worker) {
+async function handler(task, complete, worker) {
   const { workflowInstanceKey, bpmnProcessId, elementId } = task;
 
   if (bpmnProcessId != bpm) {
-    complete.forwarded();
+    await complete.forwarded();
     return;
   }
+/*
   console.log (JSON.stringify(task));
+*/
 
   // Using one generalTask worker and internal routing to diffrent element inside bpm
 
   switch (elementId) {
   case 'generate':
-    Generatehandler (task, complete, worker);
+    await Generatehandler (task, complete, worker);
     break;
   case 'charge-card':
-    Chargehandler (task, complete, worker);
+    await Chargehandler (task, complete, worker);
     break;
   case 'charge-card-premium':
-    ChargePremiumhandler (task, complete, worker);
+    await ChargePremiumhandler (task, complete, worker);
     break;
+  default:
+    {
+      console.log('Unknown activityId in process ' + bpm + ' (' + elementId + ')');
+      await complete.failure('Unknown activetyId in process ' + bpm + ' (' + elementId + ')', 0);
+    }
   }
-/*
-  else {
-    console.log('Unknown activetyId in process ' + bpm);
-    complete.failure('Unknown activetyId in process ' + bpm, 0);
-  }
-*/
 };
 
 function Chargehandler(task, complete, worker) {
