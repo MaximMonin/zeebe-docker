@@ -53,40 +53,16 @@ Object.keys(signals).forEach((signal) => {
 
 
 async function main() {
-  // subscribe to the task-type: 'charge-card'
+  // subscribe to the task-type: 'generalTask'
   const zbWorker1 = client.createWorker({
-    taskType: 'charge-card',
-    taskHandler: Chargehandler,
+    taskType: 'generalTask',
+    taskHandler: handler,
     failWorkflowOnException: false,
     maxJobsToActivate: 10,
     timeout: timeout,
     loglevel: loglevel,
-    onReady: () => console.log(`Worker connected to 'charge-card'`),
-    onConnectionError: () => console.log(`Worker disconnected from 'change-card'`)
-  });
-
-  // subscribe to the task-type: 'charge-card-premium'
-  const zbWorker2 = client.createWorker({
-    taskType: 'charge-card-premium',
-    taskHandler: ChargePremiumhandler,
-    failWorkflowOnException: false,
-    maxJobsToActivate: 10,
-    timeout: timeout,
-    loglevel: loglevel,
-    onReady: () => console.log(`Worker connected to 'charge-card-premium'`),
-    onConnectionError: () => console.log(`Worker disconnected from 'change-card-premium'`)
-  });
-
-  // subscribe to the task-type: 'generate-item-amount'
-  const zbWorker3 = client.createWorker({
-    taskType: 'generate-item-amount',
-    taskHandler: Generatehandler,
-    failWorkflowOnException: false,
-    maxJobsToActivate: 10,
-    timeout: timeout,
-    loglevel: loglevel,
-    onReady: () => console.log(`Worker connected to 'generate-item-amount'`),
-    onConnectionError: () => console.log(`Worker disconnected from 'generate-item-amount'`)
+    onReady: () => console.log(`Worker connected to 'generalTask'`),
+    onConnectionError: () => console.log(`Worker disconnected from 'generalTask'`)
   });
 
   app.post('/process-definition/:key/start', startWorkflow);
@@ -110,13 +86,38 @@ async function startWorkflow (req, res) {
 
 main ();
 
-function Chargehandler(task, complete, worker) {
+function handler(task, complete, worker) {
   const { workflowInstanceKey, bpmnProcessId, elementId } = task;
 
   if (bpmnProcessId != bpm) {
     complete.forwarded();
     return;
   }
+  console.log (JSON.stringify(task));
+
+  // Using one generalTask worker and internal routing to diffrent element inside bpm
+
+  switch (elementId) {
+  case 'generate':
+    Generatehandler (task, complete, worker);
+    break;
+  case 'charge-card':
+    Chargehandler (task, complete, worker);
+    break;
+  case 'charge-card-premium':
+    ChargePremiumhandler (task, complete, worker);
+    break;
+  }
+/*
+  else {
+    console.log('Unknown activetyId in process ' + bpm);
+    complete.failure('Unknown activetyId in process ' + bpm, 0);
+  }
+*/
+};
+
+function Chargehandler(task, complete, worker) {
+  const {workflowInstanceKey} = task;
 
   // Get a process variable
   const amount = task.variables.amount;
@@ -127,12 +128,7 @@ function Chargehandler(task, complete, worker) {
 };
 
 function ChargePremiumhandler(task, complete, worker) {
-  const { workflowInstanceKey, bpmnProcessId, elementId } = task;
-
-  if (bpmnProcessId != bpm) {
-    complete.forwarded();
-    return;
-  }
+  const {workflowInstanceKey} = task;
 
   // Get a process variable
   const amount = task.variables.amount;
@@ -164,14 +160,8 @@ function ChargePremiumhandler(task, complete, worker) {
 */
 };
 
-
 function Generatehandler(task, complete, worker) {
-  const { workflowInstanceKey, bpmnProcessId, elementId } = task;
-
-  if (bpmnProcessId != bpm) {
-    complete.forwarded();
-    return;
-  }
+  const { workflowInstanceKey } = task;
 
   console.log(`Generating amount and item for Process ` + workflowInstanceKey.toString());
 

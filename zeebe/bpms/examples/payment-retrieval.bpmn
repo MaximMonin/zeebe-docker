@@ -5,9 +5,9 @@
       <bpmn:outgoing>Flow_1jf65ng</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_1jf65ng" sourceRef="StartEvent_1" targetRef="generate" />
-    <bpmn:serviceTask id="Activity_1xytz6s" name="Снять деньги с карты" camunda:type="external" camunda:topic="charge-card">
+    <bpmn:serviceTask id="charge-card" name="Снять деньги с карты" camunda:type="external" camunda:topic="charge-card">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="charge-card" />
+        <zeebe:taskDefinition type="generalTask" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_03ohmj4</bpmn:incoming>
       <bpmn:outgoing>Flow_1x4x0wm</bpmn:outgoing>
@@ -15,33 +15,33 @@
     <bpmn:endEvent id="Event_payment_done" name="Оплата получена">
       <bpmn:incoming>Flow_1x4x0wm</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_1x4x0wm" sourceRef="Activity_1xytz6s" targetRef="Event_payment_done" />
+    <bpmn:sequenceFlow id="Flow_1x4x0wm" sourceRef="charge-card" targetRef="Event_payment_done" />
     <bpmn:sequenceFlow id="Flow_0mpi2xp" sourceRef="generate" targetRef="Gateway_19wpozq" />
     <bpmn:exclusiveGateway id="Gateway_19wpozq">
       <bpmn:incoming>Flow_0mpi2xp</bpmn:incoming>
       <bpmn:outgoing>Flow_03ohmj4</bpmn:outgoing>
       <bpmn:outgoing>Flow_0lfa0vq</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_03ohmj4" name="&#60; 800" sourceRef="Gateway_19wpozq" targetRef="Activity_1xytz6s">
+    <bpmn:sequenceFlow id="Flow_03ohmj4" name="&#60; 800" sourceRef="Gateway_19wpozq" targetRef="charge-card">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= amount &lt; 800</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0lfa0vq" name="&#62;= 800" sourceRef="Gateway_19wpozq" targetRef="Activity_02pjjyc">
+    <bpmn:sequenceFlow id="Flow_0lfa0vq" name="&#62;= 800" sourceRef="Gateway_19wpozq" targetRef="charge-card-premium">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= amount &gt;= 800</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:endEvent id="Event_payment_done_premium" name="Премиум оплата получена">
       <bpmn:incoming>Flow_1rk9h1b</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_1rk9h1b" sourceRef="Activity_02pjjyc" targetRef="Event_payment_done_premium" />
-    <bpmn:serviceTask id="Activity_02pjjyc" name="Премиум снятие денег" camunda:type="external" camunda:topic="charge-card-premium">
+    <bpmn:sequenceFlow id="Flow_1rk9h1b" sourceRef="charge-card-premium" targetRef="Event_payment_done_premium" />
+    <bpmn:serviceTask id="charge-card-premium" name="Премиум снятие денег" camunda:type="external" camunda:topic="charge-card-premium">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="charge-card-premium" />
+        <zeebe:taskDefinition type="generalTask" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0lfa0vq</bpmn:incoming>
       <bpmn:outgoing>Flow_1rk9h1b</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="generate" name="Генератор">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="generate-item-amount" />
+        <zeebe:taskDefinition type="generalTask" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jf65ng</bpmn:incoming>
       <bpmn:outgoing>Flow_0mpi2xp</bpmn:outgoing>
@@ -86,7 +86,7 @@
           <dc:Bounds x="172" y="142" width="52" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0s4exbd_di" bpmnElement="Activity_1xytz6s">
+      <bpmndi:BPMNShape id="Activity_0s4exbd_di" bpmnElement="charge-card">
         <dc:Bounds x="710" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1co56v5_di" bpmnElement="Event_payment_done">
@@ -104,7 +104,7 @@
           <dc:Bounds x="907" y="255" width="86" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1onwivo_di" bpmnElement="Activity_02pjjyc">
+      <bpmndi:BPMNShape id="Activity_1onwivo_di" bpmnElement="charge-card-premium">
         <dc:Bounds x="710" y="190" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0f5a0hn_di" bpmnElement="generate">
