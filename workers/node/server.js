@@ -69,6 +69,8 @@ async function main() {
 
   app.post('/process-definition/:key/start', startWorkflow);
   app.post('/process-definition/key/:key/start', startWorkflow);
+  app.post('/process-definition/:key/startwithresult', startWorkflow);
+  app.post('/process-definition/key/:key/startwithresult', startWorkflow);
 };
 
 async function startWorkflow (req, res) {
@@ -78,12 +80,21 @@ async function startWorkflow (req, res) {
   console.log ('Starting workflow...' + workflowKey + ' ' + JSON.stringify(iParams));
   const vars = iParams.variables;
 
-  const { workflowInstanceKey } = await client.createWorkflowInstance(
-      workflowKey,
-      vars
-  );
-  var obj = {workflowInstanceKey: workflowInstanceKey};
-  res.status(200).end(JSON.stringify(obj));
+  try {
+    console.log (req.originalUrl);
+    if (req.originalUrl.includes("withresult") == false) {
+      const { workflowInstanceKey } = await client.createWorkflowInstance(workflowKey,vars);
+      var obj = {workflowInstanceKey: workflowInstanceKey};
+      res.status(200).end(JSON.stringify(obj));
+    }
+    else {
+      const obj = await client.createWorkflowInstanceWithResult(workflowKey,vars);
+      res.status(200).end(JSON.stringify(obj));
+    }
+  }
+  catch (e) {
+    console.error(e);
+  }
 }
 
 main ();
