@@ -51,6 +51,7 @@ zeebe:
       # per binding basis for client, management and replication
       # This setting can also be overridden using the environment variable ZEEBE_BROKER_NETWORK_HOST.
       host: 0.0.0.0
+      maxMessageSize: 4MB
 
     data:
       # Specify a list of directories in which data is stored.
@@ -75,6 +76,9 @@ zeebe:
       partitionsCount: 3
 
       initialContactPoints: [ node0:26502, node1:26502, node2:26502 ]
+      membership:
+        broadcastUpdates: true
+        broadcastDisputes: true
 
     threads:
       # Controls the number of non-blocking CPU threads to be used.
@@ -88,7 +92,30 @@ zeebe:
       # This setting can also be overridden using the environment variable ZEEBE_BROKER_THREADS_IOTHREADCOUNT
       ioThreadCount: 2
 
+    backpressure:
+      enabled : true
+      algorithm: "vegas"
+      vegas:
+        initialLimit: 100
+
     exporters:
+     # debuglog:
+        # className: io.zeebe.broker.exporter.debug.DebugLogExporter
+        # args:
+        #   logLevel: debug
+        #   prettyPrint: false
+
+      # Debug HTTP Export ---------------
+      #
+      # Enable the following debug exporter to start a http server to inspect the exported records
+      #
+      # These setting can also be overridden using the environment variables "ZEEBE_BROKER_EXPORTERS_DEBUGHTTP_..."
+      #
+      # debugHttp:
+        # className: io.zeebe.broker.exporter.debug.DebugHttpExporter
+        # args:
+        #   port = 8000
+        #   limit = 1024
       elasticsearch:
         className: io.zeebe.exporter.ElasticsearchExporter
         args:

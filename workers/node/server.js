@@ -91,11 +91,7 @@ async function startWorkflow (req, res) {
       res.status(200).end(JSON.stringify(obj));
     }
     else {
-      const obj = await client.createWorkflowInstanceWithResult({
-         processId: workflowKey,
-         variables: vars, 
-         requestTimeout: 2 * 60 * 1000 // 2m 
-      });
+      const obj = await client.createWorkflowInstanceWithResult(workflowKey,vars,{requestTimeout: 2 * 60 * 1000 });
       res.status(200).end(JSON.stringify(obj));
     }
   }
