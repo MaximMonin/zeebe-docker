@@ -1,9 +1,9 @@
-const { ZBClient, Duration } = require('zeebe-node');
+const { ZBClient, Duration, ZBLogger } = require('zeebe-node');
 const express = require('express');
 const { router } = require ('./js/router.js');
 
 const url = process.env.ZeebeUrl || 'gateway:26500';
-const timeout = process.env.ResponseTimeout || 10000;
+const timeout = process.env.ResponseTimeout || 60000;
 const loglevel = process.env.LogLevel || 'INFO';
 const tasktype = process.env.TaskType || 'ServiceTask';
 
@@ -17,6 +17,7 @@ const server = app.listen(port, () =>
 );
 
 const client = new ZBClient(url, {
+//    loglevel: 'DEBUG',
     retry: true,
     maxRetries: -1, // infinite retries
     maxRetryTimeout: Duration.seconds.of(30),
@@ -57,10 +58,12 @@ async function main() {
     console.error(e)
   }
   const zbWorker1 = client.createWorker({
+//    debug: true,
     taskType: tasktype,
     taskHandler: router,
     failWorkflowOnException: false,
     maxJobsToActivate: 200,
+    longPoll: Duration.minutes.of(2),
     timeout: timeout,
     loglevel: loglevel,
     onReady: () => console.log('Worker connected to ' + tasktype),
@@ -81,14 +84,18 @@ async function startWorkflow (req, res) {
   const vars = iParams.variables;
 
   try {
-    console.log (req.originalUrl);
+//    console.log (req.originalUrl);
     if (req.originalUrl.includes("withresult") == false) {
       const { workflowInstanceKey } = await client.createWorkflowInstance(workflowKey,vars);
       var obj = {workflowInstanceKey: workflowInstanceKey};
       res.status(200).end(JSON.stringify(obj));
     }
     else {
-      const obj = await client.createWorkflowInstanceWithResult(workflowKey,vars);
+      const obj = await client.createWorkflowInstanceWithResult({
+         processId: workflowKey,
+         variables: vars, 
+         requestTimeout: 2 * 60 * 1000 // 2m 
+      });
       res.status(200).end(JSON.stringify(obj));
     }
   }

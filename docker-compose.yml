@@ -100,7 +100,7 @@ services:
     environment:
       - LogLevel=INFO
       - ZeebeUrl=gateway:26500
-      - ResponseTimeout=5000
+      - ResponseTimeout=60000
       - TaskType=ServiceTask
       - TelegramBot
       - TelegramChannel
