@@ -27,7 +27,6 @@ services:
     networks:
       - zeebe_network
     volumes:
-      - ./zeebe/test.sh:/test.sh
       - /etc/localtime:/etc/localtime:ro
 
   node0:
