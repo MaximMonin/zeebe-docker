@@ -110,6 +110,18 @@ services:
       - ./workers/js:/app/js
       - /etc/localtime:/etc/localtime:ro
 
+  worker-http:
+    container_name: zeebe-worker-http
+    image: camunda/zeebe-http-worker:0.23.0
+    environment:
+      - zeebe.client.broker.contactPoint=gateway:26500
+    depends_on:
+      - gateway
+    networks:
+      - zeebe_network
+    environment:
+      - ZEEBE_WORKER_DEFAULTTYPE=http
+
   operate:
     container_name: zeebe-operate
     image: camunda/operate:0.24.2
