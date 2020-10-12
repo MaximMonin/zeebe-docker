@@ -34,8 +34,8 @@ services:
     container_name: zeebe-broker-1
     image: camunda/zeebe:0.24.2
     restart: always
-    depends_on:
-      - hazelcast
+#    depends_on:
+#      - hazelcast
     environment:
       - ZEEBE_LOG_LEVEL=debug
       - ZEEBE_BROKER_CLUSTER_NODEID=0
@@ -45,8 +45,8 @@ services:
       - zeebe_network
     volumes:
       - ./zeebe/node0:/usr/local/zeebe/data
-#      - ./cfg/zeebe-hazelcast-exporter.jar:/usr/local/zeebe/exporters/zeebe-hazelcast-exporter.jar
-      - ./cfg/application.yaml:/usr/local/zeebe/config/application.yaml
+#      - ./cfg/zeebe-hazelcast-exporter.jar:/usr/local/zeebe/exporters/zeebe-hazelcast-exporter.jar:ro
+      - ./cfg/application.yaml:/usr/local/zeebe/config/application.yaml:ro
       - /etc/localtime:/etc/localtime:ro
 
 #  node1:
@@ -64,8 +64,8 @@ services:
 #      - node0
 #    volumes:
 #      - ./zeebe/node1:/usr/local/zeebe/data
-#      - ./cfg/zeebe-hazelcast-exporter.jar:/usr/local/zeebe/exporters/zeebe-hazelcast-exporter.jar
-#      - ./cfg/application.yaml:/usr/local/zeebe/config/application.yaml
+#      - ./cfg/zeebe-hazelcast-exporter.jar:/usr/local/zeebe/exporters/zeebe-hazelcast-exporter.jar:ro
+#      - ./cfg/application.yaml:/usr/local/zeebe/config/application.yaml:ro
 #      - /etc/localtime:/etc/localtime:ro
 
 #  node2:
@@ -83,8 +83,8 @@ services:
 #      - node1
 #    volumes:
 #      - ./zeebe/node2:/usr/local/zeebe/data
-#      - ./cfg/zeebe-hazelcast-exporter.jar:/usr/local/zeebe/exporters/zeebe-hazelcast-exporter.jar
-#      - ./cfg/application.yaml:/usr/local/zeebe/config/application.yaml
+#      - ./cfg/zeebe-hazelcast-exporter.jar:/usr/local/zeebe/exporters/zeebe-hazelcast-exporter.jar:ro
+#      - ./cfg/application.yaml:/usr/local/zeebe/config/application.yaml:ro
 #      - /etc/localtime:/etc/localtime:ro
 
   worker-node:
@@ -102,11 +102,11 @@ services:
       - LogLevel=INFO
       - ZeebeUrl=gateway:26500
       - ResponseTimeout=60000
-      - TaskType=ServiceTask
+      - TaskType=service-task
       - TelegramBot
       - TelegramChannel
     volumes:
-      - ./workers/node/server.js:/app/server.js
+      - ./workers/node/server.js:/app/server.js:ro
       - ./workers/js:/app/js
       - /etc/localtime:/etc/localtime:ro
 
@@ -120,7 +120,7 @@ services:
       - node0
       - elasticsearch
     volumes:
-      - ./cfg/operate-application.yml:/usr/local/operate/config/application.yml
+      - ./cfg/operate-application.yml:/usr/local/operate/config/application.yml:ro
       - /etc/localtime:/etc/localtime:ro
     networks:
       - zeebe_network
@@ -139,7 +139,7 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - ./cfg/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./cfg/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
       - ./elastic:/usr/share/elasticsearch/data
       - /etc/localtime:/etc/localtime:ro
     expose:
@@ -154,78 +154,78 @@ services:
     networks:
       - zeebe_network
     volumes:
-      - ./cfg/kibana.yml:/usr/share/kibana/config/kibana.yml
+      - ./cfg/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
       - /etc/localtime:/etc/localtime:ro
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     ports:
      - "2591:5601"
 
-  monitor:
-    container_name: zeebe-monitor
-    restart: always
-    image: camunda/zeebe-simple-monitor:0.19.1
-    environment:
-      - zeebe.client.worker.hazelcast.connection=hazelcast:5701
-      - zeebe.client.broker.contactPoint=gateway:26500
-      - zeebe.client.security.plaintext=true
-      - spring.datasource.url=jdbc:postgresql://db:5432/zeebe
-      - spring.datasource.username=zeebe
-      - spring.datasource.password=zeebe
-      - spring.datasource.driverClassName=org.postgresql.Driver
-      - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-      - server.port=8082
-    ports:
-      - "2592:8082"
-    depends_on:
-      - node0
-    networks:
-      - zeebe_network
-    volumes:
-      - ./cfg/postgresql-42.2.16.jar:/app/libs/postgresql-42.2.16.jar
-      - /etc/localtime:/etc/localtime:ro
+#  monitor:
+#    container_name: zeebe-monitor
+#    restart: always
+#    image: camunda/zeebe-simple-monitor:0.19.1
+#    environment:
+#      - zeebe.client.worker.hazelcast.connection=hazelcast:5701
+#      - zeebe.client.broker.contactPoint=gateway:26500
+#      - zeebe.client.security.plaintext=true
+#      - spring.datasource.url=jdbc:postgresql://db:5432/zeebe
+#      - spring.datasource.username=zeebe
+#      - spring.datasource.password=zeebe
+#      - spring.datasource.driverClassName=org.postgresql.Driver
+#      - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+#      - server.port=8082
+#    ports:
+#      - "2592:8082"
+#    depends_on:
+#      - node0
+#    networks:
+#      - zeebe_network
+#    volumes:
+#      - ./cfg/postgresql-42.2.16.jar:/app/libs/postgresql-42.2.16.jar:ro
+#      - /etc/localtime:/etc/localtime:ro
 
-  hazelcast:
-    container_name: zeebe-hazelcast
-    image: hazelcast/hazelcast:4.0.2
-    expose:
-      - 5701
-    mem_limit: 2g
-    environment:
-      - JAVA_OPTS="-Dhazelcast.local.publicAddress=hazelcast:5701"
-    networks:
-      - zeebe_network
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
+#  hazelcast:
+#    container_name: zeebe-hazelcast
+#    image: hazelcast/hazelcast:4.0.2
+#    expose:
+#      - 5701
+#    mem_limit: 2g
+#    environment:
+#      - JAVA_OPTS="-Dhazelcast.local.publicAddress=hazelcast:5701"
+#    networks:
+#      - zeebe_network
+#    volumes:
+#      - /etc/localtime:/etc/localtime:ro
  
-  db:
-    container_name: zeebe-db
-    image: postgres:12.3
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: postgres
-    volumes:
-      - ./db:/var/lib/postgresql/data
-      - ./cfg/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - /etc/localtime:/etc/localtime:ro
-    networks:
-      - zeebe_network
+#  db:
+#    container_name: zeebe-db
+#    image: postgres:12.3
+#    restart: always
+#    environment:
+#      POSTGRES_PASSWORD: postgres
+#    volumes:
+#      - ./db:/var/lib/postgresql/data
+#      - ./cfg/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+#      - /etc/localtime:/etc/localtime:ro
+#    networks:
+#      - zeebe_network
 
-  pgadmin:
-    image: dpage/pgadmin4:4.26
-    container_name: zeebe-pgadmin
-    restart: always
-    depends_on:
-      - db
-    ports:
-      - "2593:80"
-    networks:
-      - zeebe_network
-    volumes:
-      - ./cfg/servers.json:/pgadmin4/servers.json
-      - /etc/localtime:/etc/localtime:ro
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@postgres
-      - PGADMIN_DEFAULT_PASSWORD=postgres
-      - PGADMIN_SERVER_JSON_FILE=/pgadmin4/servers.json
+#  pgadmin:
+#    image: dpage/pgadmin4:4.26
+#    container_name: zeebe-pgadmin
+#    restart: always
+#    depends_on:
+#      - db
+#    ports:
+#      - "2593:80"
+#    networks:
+#      - zeebe_network
+#    volumes:
+#      - ./cfg/servers.json:/pgadmin4/servers.json:ro
+#      - /etc/localtime:/etc/localtime:ro
+#    environment:
+#      - PGADMIN_DEFAULT_EMAIL=admin@postgres
+#      - PGADMIN_DEFAULT_PASSWORD=postgres
+#      - PGADMIN_SERVER_JSON_FILE=/pgadmin4/servers.json
 

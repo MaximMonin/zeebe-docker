@@ -7,7 +7,7 @@
     <bpmn:sequenceFlow id="Flow_1jf65ng" sourceRef="StartEvent_1" targetRef="generate" />
     <bpmn:serviceTask id="charge-card" name="Снять деньги с карты" camunda:type="external" camunda:topic="charge-card">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ServiceTask" />
+        <zeebe:taskDefinition type="service-task" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_03ohmj4</bpmn:incoming>
       <bpmn:outgoing>Flow_1x4x0wm</bpmn:outgoing>
@@ -34,14 +34,14 @@
     <bpmn:sequenceFlow id="Flow_1rk9h1b" sourceRef="charge-card-premium" targetRef="Event_payment_done_premium" />
     <bpmn:serviceTask id="charge-card-premium" name="Премиум снятие денег" camunda:type="external" camunda:topic="charge-card-premium">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ServiceTask" />
+        <zeebe:taskDefinition type="service-task" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0lfa0vq</bpmn:incoming>
       <bpmn:outgoing>Flow_1rk9h1b</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="generate" name="Генератор">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ServiceTask" />
+        <zeebe:taskDefinition type="service-task" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jf65ng</bpmn:incoming>
       <bpmn:outgoing>Flow_0mpi2xp</bpmn:outgoing>

@@ -5,7 +5,7 @@ const { router } = require ('./js/router.js');
 const url = process.env.ZeebeUrl || 'gateway:26500';
 const timeout = process.env.ResponseTimeout || 60000;
 const loglevel = process.env.LogLevel || 'INFO';
-const tasktype = process.env.TaskType || 'ServiceTask';
+const tasktype = process.env.TaskType || 'service-task';
 
 console.log('Zeebe Node worker is starting...')
 const app = express();
@@ -45,6 +45,7 @@ const shutdown = (signal, value) => {
 Object.keys(signals).forEach((signal) => {
   process.on(signal, () => {
     console.log(`Zeebe Node worker is shutdowning`);
+    client.close().then(() => console.log('All workers closed'));
     shutdown(signal, signals[signal]);
   });
 });
