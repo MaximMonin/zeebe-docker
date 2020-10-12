@@ -75,6 +75,7 @@ async function main() {
   app.post('/process-definition/key/:key/start', startWorkflow);
   app.post('/process-definition/:key/startwithresult', startWorkflow);
   app.post('/process-definition/key/:key/startwithresult', startWorkflow);
+  app.post('/message', publishMessage);
 };
 
 async function startWorkflow (req, res) {
@@ -98,7 +99,32 @@ async function startWorkflow (req, res) {
   }
   catch (e) {
     console.error(e);
+    res.status(200).end(JSON.stringify({Error: e}));
   }
-}
+};
+
+async function publishMessage (req, res) {
+  const iParams = Object.assign({}, req.query, req.body);
+
+  console.log ('Message published... ' + JSON.stringify(iParams));
+  const messageName = iParams.messageName;
+  const Key = iParams.correlationKey;
+  const vars = iParams.variables;
+
+  try {
+    await client.publishMessage({
+      correlationKey: Key,
+      name: messageName,
+      variables: vars,
+      timeToLive: 600000
+    });
+    res.status(200).end(JSON.stringify({Result: 'OK'}));
+  }
+  catch (e) {
+    console.error(e);
+    res.status(200).end(JSON.stringify({Error: e}));
+  }
+};
+
 
 main ();
