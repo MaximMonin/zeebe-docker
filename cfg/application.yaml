@@ -59,10 +59,11 @@ zeebe:
       directories: [ data ]
       # The size of data log segment files.
       # This setting can also be overridden using the environment variable ZEEBE_BROKER_DATA_LOGSEGMENTSIZE.
-      logSegmentSize: 128MB
+      logSegmentSize: 512MB
       # How often we take snapshots of streams (time unit)
       # This setting can also be overridden using the environment variable ZEEBE_BROKER_DATA_SNAPSHOTPERIOD.
-      snapshotPeriod: 60m
+      snapshotPeriod: 15m
+
 
     cluster:
       # Specifies the Zeebe cluster size.
