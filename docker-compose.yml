@@ -23,6 +23,7 @@ services:
       - ZEEBE_GATEWAY_LONGPOLLING_ENABLED=true
       - ZEEBE_BROKER_GATEWAY_SECURITY_ENABLED=false
       - ZEEBE_GATEWAY_THREADS_MANAGEMENTTHREADS=4
+      - JAVA_OPTS=-Xmx4g -XX:MaxRAMPercentage=25.0 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/zeebe/data -XX:ErrorFile=/usr/local/zeebe/data/zeebe_error%p.log -XX:+ExitOnOutOfMemoryError
     ports:
       - "26500:26500"
     networks:
@@ -40,6 +41,7 @@ services:
       - ZEEBE_LOG_LEVEL=debug
       - ZEEBE_BROKER_CLUSTER_NODEID=0
       - ZEEBE_BROKER_GATEWAY_CLUSTER_HOST=gateway
+      - JAVA_OPTS=-Xmx4g -XX:MaxRAMPercentage=25.0 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/zeebe/data -XX:ErrorFile=/usr/local/zeebe/data/zeebe_error%p.log -XX:+ExitOnOutOfMemoryError
 #      - ZEEBE_HAZELCAST_REMOTE_ADDRESS=hazelcast:5701
 #    ports:
 #      - "26500:26500"
