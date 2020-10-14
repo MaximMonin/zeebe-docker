@@ -114,6 +114,7 @@ services:
     volumes:
       - ./workers/node/server.js:/app/server.js:ro
       - ./workers/js:/app/js
+      - ./zeebe/bpms:/zeebe/bpms
       - /etc/localtime:/etc/localtime:ro
 
   worker-http:

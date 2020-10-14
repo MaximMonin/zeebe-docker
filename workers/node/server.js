@@ -76,6 +76,7 @@ async function main() {
   app.post('/process-definition/:key/startwithresult', startWorkflow);
   app.post('/process-definition/key/:key/startwithresult', startWorkflow);
   app.post('/message', publishMessage);
+  app.post('/deployment/create', deployWorkflow);
 };
 
 async function startWorkflow (req, res) {
@@ -119,6 +120,23 @@ async function publishMessage (req, res) {
       timeToLive: 600000
     });
     res.status(200).end(JSON.stringify({Result: 'OK'}));
+  }
+  catch (e) {
+    console.error(e);
+    res.status(200).end(JSON.stringify({Error: e}));
+  }
+};
+
+async function deployWorkflow (req, res) {
+  const iParams = Object.assign({}, req.query, req.body);
+
+  console.log ('Deploying workflow... ' + JSON.stringify(iParams));
+  const filename = iParams.upload;
+
+  try {
+    const data = await client.deployWorkflow(filename);
+    console.log(data);
+    res.status(200).end(JSON.stringify({Result: data}));
   }
   catch (e) {
     console.error(e);
