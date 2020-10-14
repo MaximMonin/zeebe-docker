@@ -100,7 +100,7 @@ async function startWorkflow (req, res) {
   }
   catch (e) {
     console.error(e);
-    res.status(200).end(JSON.stringify({Error: e}));
+    res.status(200).end(JSON.stringify(e));
   }
 };
 
@@ -123,7 +123,7 @@ async function publishMessage (req, res) {
   }
   catch (e) {
     console.error(e);
-    res.status(200).end(JSON.stringify({Error: e}));
+    res.status(200).end(JSON.stringify(e));
   }
 };
 
@@ -136,13 +136,12 @@ async function deployWorkflow (req, res) {
   try {
     const data = await client.deployWorkflow(filename);
     console.log(data);
-    res.status(200).end(JSON.stringify({Result: data}));
+    res.status(200).end(JSON.stringify(data));
   }
   catch (e) {
     console.error(e);
-    res.status(200).end(JSON.stringify({Error: e}));
+    res.status(200).end(JSON.stringify(e));
   }
 };
-
 
 main ();
