@@ -7,7 +7,7 @@ networks:
 services:
   gateway:
     container_name: zeebe-gateway
-    image: camunda/zeebe:0.25.0-alpha2
+    image: camunda/zeebe:0.25.0
     restart: always
     depends_on:
       - node0
@@ -33,7 +33,7 @@ services:
 
   node0:
     container_name: zeebe-broker-1
-    image: camunda/zeebe:0.25.0-alpha2
+    image: camunda/zeebe:0.25.0
     restart: always
 #    depends_on:
 #      - hazelcast
@@ -41,6 +41,7 @@ services:
       - ZEEBE_LOG_LEVEL=debug
       - ZEEBE_BROKER_CLUSTER_NODEID=0
       - ZEEBE_BROKER_GATEWAY_CLUSTER_HOST=gateway
+      - ZEEBE_BROKER_DATA_USEMMAP=true
       - JAVA_OPTS=-Xmx4g -XX:MaxRAMPercentage=25.0 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/zeebe/data -XX:ErrorFile=/usr/local/zeebe/data/zeebe_error%p.log -XX:+ExitOnOutOfMemoryError
 #      - ZEEBE_HAZELCAST_REMOTE_ADDRESS=hazelcast:5701
 #    ports:
@@ -57,7 +58,7 @@ services:
 
 #  node1:
 #    container_name: zeebe-broker-2
-#    image: camunda/zeebe:0.25.0-alpha2
+#    image: camunda/zeebe:0.25.0
 #    restart: always
 #    environment:
 #      - ZEEBE_LOG_LEVEL=debug
@@ -76,7 +77,7 @@ services:
 
 #  node2:
 #    container_name: zeebe-broker-3
-#    image: camunda/zeebe:0.25.0-alpha2
+#    image: camunda/zeebe:0.25.0
 #    restart: always
 #    environment:
 #      - ZEEBE_LOG_LEVEL=debug
@@ -104,6 +105,8 @@ services:
     ports:
       # rest api
       - "2595:3000"
+      # websocket server
+      - "2596:8080"
     environment:
       - LogLevel=INFO
       - ZeebeUrl=gateway:26500
@@ -117,21 +120,21 @@ services:
       - ./zeebe/bpms:/zeebe/bpms
       - /etc/localtime:/etc/localtime:ro
 
-  worker-http:
-    container_name: zeebe-worker-http
-    image: camunda/zeebe-http-worker:0.23.0
-    environment:
-      - zeebe.client.broker.contactPoint=gateway:26500
-    depends_on:
-      - node0
-    networks:
-      - zeebe_network
-    environment:
-      - ZEEBE_WORKER_DEFAULTTYPE=http
+#  worker-http:
+#    container_name: zeebe-worker-http
+#    image: camunda/zeebe-http-worker:0.23.0
+#    environment:
+#      - zeebe.client.broker.contactPoint=gateway:26500
+#    depends_on:
+#      - node0
+#    networks:
+#      - zeebe_network
+#    environment:
+#      - ZEEBE_WORKER_DEFAULTTYPE=http
 
   operate:
     container_name: zeebe-operate
-    image: camunda/operate:0.24.2
+    image: camunda/operate:0.25.0-rc1
     restart: always
     ports:
       - "2590:8080"

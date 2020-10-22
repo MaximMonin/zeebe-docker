@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_10vzn56" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Zeebe Modeler" exporterVersion="0.10.0">
+  <bpmn:process id="search-domain" name="Search domain" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Start Search Domains">
+      <bpmn:outgoing>Flow_0kheqkl</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="default-zone-list" name="Get Default Domain Zone List" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="service-task">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="service-task" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="default_zone_list" value=".ua  .com.ua  .kiev.ua  .net.ua  .org.ua  .in.ua  .biz  .com  .net  .org  .ru" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_01j5k0r</bpmn:incoming>
+      <bpmn:outgoing>Flow_09nvxia</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="full-zone-list" name="Get Full Domain Zone List" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="service-task">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="service-task" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="ukraine_zone" value=".cherkassy.ua .chernigov.ua .chernivtsi.ua .chernovtsy.ua .ck.ua .cn.ua .com.ua .crimea.ua .cv.ua .dn.ua .donetsk.ua .dp.ua .if.ua .in.ua .ivano-frankivsk.ua .kh.ua .kharkiv.ua .kharkov.ua .kherson.ua .khmelnitskiy.ua .kiev.ua .kirovograd.ua .km.ua .kr.ua .ks.ua .lg.ua .lt.ua .lugansk.ua .lutsk.ua .lviv.ua .mk.ua .net.ua .nikolaev.ua .od.ua .odessa.ua .org.ua .pl.ua .poltava.ua .rivne.ua .rovno.ua .rv.ua .sebastopol.ua .sm.ua .sumy.ua .te.ua .ternopil.ua .ua .uz.ua .uzhgorod.ua .vinnica.ua .vn.ua .volyn.ua .укр .yalta.ua .zaporizhzhe.ua .zhitomir.ua .zp.ua .zt.ua" />
+          <zeebe:header key="international_zone" value=".ae   .aero   .ag   .ai   .am   .asia   .at   .be   .biz   .by   .bz   .cc   .ch .cn   .co   .co.il   .co.in   .co.nz   .co.uk   .co.za   .com   .com.cn   .com.mx   .com.pl   .com.pt   .com.ru .com.tw   .cx   .cz   .de   .dk   .es   .eu   .fm   .fr   .gr   .hk   .im   .in .info   .io   .it   .jp   .kg   .kr   .kz   .la   .li   .lt   .lv   .md   .me .me.uk   .mobi   .ms   .mx   .name   .net   .net.pl   .nl   .org   .org.mx   .org.uk   .pl   .pro .ro   .ru   .sc   .se   .sg   .sh   .si   .sk   .su   .tc   .tel   .tj   .tk .tm   .travel   .tv   .tw   .uk   .uz   .vc   .ws   .рф" />
+          <zeebe:header key="international_new_zone" value=".academy   .actor   .agency   .apartments   .app   .art   .auction   .audio   .band   .bar   .beer   .best   .bet   .bike   .bingo   .bio   .black   .blog   .blue   .boutique   .business   .cab   .cafe   .cam   .camera   .camp   .capital   .cards   .careers   .cash   .catering   .center   .charity   .chat   .cheap   .church   .city   .cleaning   .click   .clinic   .clothing   .cloud   .club   .coffee   .college   .community   .company   .computer   .construction   .consulting   .contractors   .cool   .credit   .dance   .date   .dating   .delivery   .democrat   .dental   .design   .diamonds   .diet   .digital   .direct   .directory   .discount   .doctor   .dog   .domains   .download   .earth   .education   .email   .energy   .engineer   .equipment   .estate   .events   .exchange   .expert   .exposed   .express   .fail   .faith   .family   .farm   .fashion   .finance   .fish   .fit   .fitness   .florist   .flowers   .football   .fun   .fund   .futbol   .gallery   .games   .garden   .gift   .gifts   .glass   .global   .gold   .golf   .graphics   .green   .group   .guru   .help   .holdings   .holiday   .hospital   .host   .house   .how   .institute   .international   .kitchen   .land   .legal   .life   .lighting   .limited   .limo   .link   .live   .lol   .love   .ltd   .management   .market   .marketing   .mba   .media   .men   .menu   .moda   .money   .network   .news   .one   .online   .organic   .partners   .parts   .party   .pet   .photo   .photography   .photos   .pics   .pictures   .pink   .pizza   .plus   .poker   .press   .productions   .promo   .property   .pub   .red   .rehab   .rent   .rentals   .repair   .report   .rest   .rip   .rocks   .run   .sale   .salon   .school   .sexy   .shoes   .shop   .shopping   .show   .site   .social   .software   .solar   .solutions   .space   .store   .stream   .studio   .study   .style   .support   .surf   .systems   .tattoo   .tax   .taxi   .team   .tech   .technology   .tennis   .tips   .today   .tools   .top   .tours   .town   .toys   .trade   .trading   .training   .tube   .university   .uno   .vacations   .vet   .video   .vip   .vision   .vodka   .voyage   .watch   .webcam   .wiki   .win   .wine   .work   .works   .world   .wtf   .xyz   .yoga   .zone" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1nky289</bpmn:incoming>
+      <bpmn:outgoing>Flow_1abh13l</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_1bcuoe8" name="Domains selected">
+      <bpmn:incoming>Flow_0ha92l0</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:subProcess id="Activity_0azbe7s">
+      <bpmn:incoming>Flow_0g7goaf</bpmn:incoming>
+      <bpmn:startEvent id="Event_1010pk7">
+        <bpmn:outgoing>Flow_10r6vs4</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:intermediateCatchEvent id="DomainSearchButton" name="Domain Search Button">
+        <bpmn:incoming>Flow_1sj5mri</bpmn:incoming>
+        <bpmn:outgoing>Flow_1a5m81r</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_052yi1r" messageRef="Message_0g2f8lb" />
+      </bpmn:intermediateCatchEvent>
+      <bpmn:sequenceFlow id="Flow_10r6vs4" sourceRef="Event_1010pk7" targetRef="Gateway_0ie1d1k" />
+      <bpmn:serviceTask id="get-domains-data" name="Get Domains Data" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="service-task">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="service-task" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1a5m81r</bpmn:incoming>
+        <bpmn:outgoing>Flow_0lotpxe</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="Flow_1a5m81r" sourceRef="DomainSearchButton" targetRef="get-domains-data" />
+      <bpmn:serviceTask id="get-whois-data" name="Get whois domain data" camunda:type="external" camunda:topic="service-task">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="service-task" />
+          <zeebe:taskHeaders>
+            <zeebe:header key="whoisapi" value="https://www.imena.ua/domains/whois_ajax?domain=" />
+          </zeebe:taskHeaders>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1lekl14</bpmn:incoming>
+        <bpmn:outgoing>Flow_0kj7p4o</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:intermediateCatchEvent id="Event_0rt0rrh" name="Whois Button">
+        <bpmn:incoming>Flow_0klf8jc</bpmn:incoming>
+        <bpmn:outgoing>Flow_1lekl14</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_1lnkxlc" messageRef="Message_105iitc" />
+      </bpmn:intermediateCatchEvent>
+      <bpmn:sequenceFlow id="Flow_1lekl14" sourceRef="Event_0rt0rrh" targetRef="get-whois-data" />
+      <bpmn:sequenceFlow id="Flow_1sj5mri" sourceRef="Gateway_0ie1d1k" targetRef="DomainSearchButton" />
+      <bpmn:eventBasedGateway id="Gateway_0ie1d1k" name="Wait for event message">
+        <bpmn:incoming>Flow_10r6vs4</bpmn:incoming>
+        <bpmn:incoming>Flow_0ruwo24</bpmn:incoming>
+        <bpmn:outgoing>Flow_1sj5mri</bpmn:outgoing>
+        <bpmn:outgoing>Flow_0klf8jc</bpmn:outgoing>
+      </bpmn:eventBasedGateway>
+      <bpmn:sequenceFlow id="Flow_0klf8jc" sourceRef="Gateway_0ie1d1k" targetRef="Event_0rt0rrh" />
+      <bpmn:sequenceFlow id="Flow_0kj7p4o" sourceRef="get-whois-data" targetRef="Gateway_005pocz" />
+      <bpmn:sequenceFlow id="Flow_0lotpxe" sourceRef="get-domains-data" targetRef="Gateway_005pocz" />
+      <bpmn:sequenceFlow id="Flow_0ruwo24" sourceRef="Gateway_005pocz" targetRef="Gateway_0ie1d1k" />
+      <bpmn:exclusiveGateway id="Gateway_005pocz" name="Repeat again">
+        <bpmn:incoming>Flow_0kj7p4o</bpmn:incoming>
+        <bpmn:incoming>Flow_0lotpxe</bpmn:incoming>
+        <bpmn:outgoing>Flow_0ruwo24</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+    </bpmn:subProcess>
+    <bpmn:boundaryEvent id="Event_05zebjh" name="Max 1 hour" attachedToRef="Activity_0azbe7s">
+      <bpmn:outgoing>Flow_0cau6eh</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0vhmz0t">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="Event_14ji4w7" name="Cancel process">
+      <bpmn:incoming>Flow_1e6n93x</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0cau6eh" sourceRef="Event_05zebjh" targetRef="domain-stop-session" />
+    <bpmn:sequenceFlow id="Flow_0kheqkl" sourceRef="StartEvent_1" targetRef="Gateway_1ldeiag" />
+    <bpmn:parallelGateway id="Gateway_1ldeiag">
+      <bpmn:incoming>Flow_0kheqkl</bpmn:incoming>
+      <bpmn:outgoing>Flow_01j5k0r</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1nky289</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_01j5k0r" sourceRef="Gateway_1ldeiag" targetRef="default-zone-list" />
+    <bpmn:sequenceFlow id="Flow_1nky289" sourceRef="Gateway_1ldeiag" targetRef="full-zone-list" />
+    <bpmn:sequenceFlow id="Flow_09nvxia" sourceRef="default-zone-list" targetRef="Gateway_0m6rk0g" />
+    <bpmn:parallelGateway id="Gateway_0m6rk0g">
+      <bpmn:incoming>Flow_09nvxia</bpmn:incoming>
+      <bpmn:incoming>Flow_1abh13l</bpmn:incoming>
+      <bpmn:outgoing>Flow_0g7goaf</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_1abh13l" sourceRef="full-zone-list" targetRef="Gateway_0m6rk0g" />
+    <bpmn:sequenceFlow id="Flow_0g7goaf" sourceRef="Gateway_0m6rk0g" targetRef="Activity_0azbe7s" />
+    <bpmn:sequenceFlow id="Flow_1e6n93x" sourceRef="domain-stop-session" targetRef="Event_14ji4w7" />
+    <bpmn:serviceTask id="domain-stop-session" name="End Session" camunda:asyncBefore="true" camunda:type="external" camunda:topic="service-task">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="service-task" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0cau6eh</bpmn:incoming>
+      <bpmn:outgoing>Flow_1e6n93x</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0ha92l0" sourceRef="domain-register-notify" targetRef="Event_1bcuoe8" />
+    <bpmn:serviceTask id="domain-register-notify" name="Notify and End Session" camunda:asyncBefore="true" camunda:type="external" camunda:topic="service-task">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="service-task" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1h0o6e8</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ha92l0</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_0k87xvz" name="Register button" attachedToRef="Activity_0azbe7s">
+      <bpmn:outgoing>Flow_1h0o6e8</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0ehs4sv" messageRef="Message_0nkg21t" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1h0o6e8" sourceRef="Event_0k87xvz" targetRef="domain-register-notify" />
+  </bpmn:process>
+  <bpmn:message id="Message_0g2f8lb" name="search-domain-clicked">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=processId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_0nkg21t" name="register-domain-clicked">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=processId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_1onxwaz" name="domain-whois_clicked" />
+  <bpmn:message id="Message_105iitc" name="whois-domain-clicked">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=processId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="search-domain">
+      <bpmndi:BPMNEdge id="Flow_1h0o6e8_di" bpmnElement="Flow_1h0o6e8">
+        <di:waypoint x="1178" y="177" />
+        <di:waypoint x="1270" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ha92l0_di" bpmnElement="Flow_0ha92l0">
+        <di:waypoint x="1370" y="177" />
+        <di:waypoint x="1432" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1e6n93x_di" bpmnElement="Flow_1e6n93x">
+        <di:waypoint x="1370" y="490" />
+        <di:waypoint x="1432" y="490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0g7goaf_di" bpmnElement="Flow_0g7goaf">
+        <di:waypoint x="475" y="177" />
+        <di:waypoint x="540" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1abh13l_di" bpmnElement="Flow_1abh13l">
+        <di:waypoint x="400" y="245" />
+        <di:waypoint x="450" y="245" />
+        <di:waypoint x="450" y="202" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09nvxia_di" bpmnElement="Flow_09nvxia">
+        <di:waypoint x="400" y="110" />
+        <di:waypoint x="450" y="110" />
+        <di:waypoint x="450" y="152" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nky289_di" bpmnElement="Flow_1nky289">
+        <di:waypoint x="260" y="202" />
+        <di:waypoint x="260" y="245" />
+        <di:waypoint x="300" y="245" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01j5k0r_di" bpmnElement="Flow_01j5k0r">
+        <di:waypoint x="260" y="152" />
+        <di:waypoint x="260" y="110" />
+        <di:waypoint x="300" y="110" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kheqkl_di" bpmnElement="Flow_0kheqkl">
+        <di:waypoint x="215" y="177" />
+        <di:waypoint x="235" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cau6eh_di" bpmnElement="Flow_0cau6eh">
+        <di:waypoint x="820" y="448" />
+        <di:waypoint x="820" y="490" />
+        <di:waypoint x="1270" y="490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="159" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="168" y="202" width="62" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0bcl7f7_di" bpmnElement="default-zone-list">
+        <dc:Bounds x="300" y="70" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1s4ixv0_di" bpmnElement="full-zone-list">
+        <dc:Bounds x="300" y="205" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1bcuoe8_di" bpmnElement="Event_1bcuoe8">
+        <dc:Bounds x="1432" y="159" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1407" y="202" width="88" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0azbe7s_di" bpmnElement="Activity_0azbe7s" isExpanded="true">
+        <dc:Bounds x="540" y="60" width="620" height="370" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0ruwo24_di" bpmnElement="Flow_0ruwo24">
+        <di:waypoint x="1045" y="110" />
+        <di:waypoint x="710" y="110" />
+        <di:waypoint x="710" y="155" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lotpxe_di" bpmnElement="Flow_0lotpxe">
+        <di:waypoint x="990" y="180" />
+        <di:waypoint x="1070" y="180" />
+        <di:waypoint x="1070" y="135" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kj7p4o_di" bpmnElement="Flow_0kj7p4o">
+        <di:waypoint x="990" y="300" />
+        <di:waypoint x="1070" y="300" />
+        <di:waypoint x="1070" y="135" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0klf8jc_di" bpmnElement="Flow_0klf8jc">
+        <di:waypoint x="710" y="205" />
+        <di:waypoint x="710" y="300" />
+        <di:waypoint x="802" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sj5mri_di" bpmnElement="Flow_1sj5mri">
+        <di:waypoint x="735" y="180" />
+        <di:waypoint x="802" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lekl14_di" bpmnElement="Flow_1lekl14">
+        <di:waypoint x="838" y="300" />
+        <di:waypoint x="890" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1a5m81r_di" bpmnElement="Flow_1a5m81r">
+        <di:waypoint x="838" y="180" />
+        <di:waypoint x="890" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10r6vs4_di" bpmnElement="Flow_10r6vs4">
+        <di:waypoint x="628" y="180" />
+        <di:waypoint x="685" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1010pk7_di" bpmnElement="Event_1010pk7">
+        <dc:Bounds x="592" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0k6n2r2_di" bpmnElement="DomainSearchButton">
+        <dc:Bounds x="802" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="783" y="123" width="76" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0paoad4_di" bpmnElement="get-domains-data">
+        <dc:Bounds x="890" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0pozz7z_di" bpmnElement="get-whois-data">
+        <dc:Bounds x="890" y="260" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0lrbbmo_di" bpmnElement="Event_0rt0rrh">
+        <dc:Bounds x="802" y="282" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="788" y="258" width="65" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_07g39lv_di" bpmnElement="Gateway_0ie1d1k">
+        <dc:Bounds x="685" y="155" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="636" y="212" width="68" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1a1f2nq_di" bpmnElement="Gateway_005pocz" isMarkerVisible="true">
+        <dc:Bounds x="1045" y="85" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="977" y="83" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_14ji4w7_di" bpmnElement="Event_14ji4w7">
+        <dc:Bounds x="1432" y="472" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1412" y="515" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_11xrv4l_di" bpmnElement="Gateway_1ldeiag">
+        <dc:Bounds x="235" y="152" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_06vhal9_di" bpmnElement="Gateway_0m6rk0g">
+        <dc:Bounds x="425" y="152" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0hky9fq_di" bpmnElement="domain-stop-session">
+        <dc:Bounds x="1270" y="450" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1y12jv4_di" bpmnElement="domain-register-notify">
+        <dc:Bounds x="1270" y="137" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1u7wa0e_di" bpmnElement="Event_0k87xvz">
+        <dc:Bounds x="1142" y="159" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1172" y="202" width="75" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1e1jfrp_di" bpmnElement="Event_05zebjh">
+        <dc:Bounds x="802" y="412" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="751" y="455" width="57" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
