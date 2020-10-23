@@ -1,5 +1,6 @@
 const { ZBClient, Duration, ZBLogger } = require('zeebe-node');
 const express = require('express');
+const WebSocket = require('ws');
 const { router } = require ('./js/router.js');
 
 const url = process.env.ZeebeUrl || 'gateway:26500';
@@ -15,6 +16,9 @@ app.use(express.urlencoded({ extended: true }));
 const server = app.listen(port, () =>
   console.log(`Zeebe REST handler listening on port ${port}!`)
 );
+// Create websocket server to accept commands and return async api result data
+console.log('Zeebe Websocket server listening on port 8080...');
+const wss = new WebSocket.Server({ port: 8080 });
 
 const client = new ZBClient(url, {
 //    loglevel: 'DEBUG',
@@ -24,6 +28,88 @@ const client = new ZBClient(url, {
     onReady: () => console.log(`Client connected to gateway`),
     onConnectionError: () => console.log(`Client disconnected from gateway`),
     connectionTolerance: 3000 // milliseconds
+});
+
+// Websocket protocol
+function heartbeat() {
+  this.isAlive = true;
+};
+function noop() {};
+
+wss.on('connection', function connection(ws, req) {
+  ws.isAlive = true;
+  ws.channel = "";
+  ws.processId = null;
+
+  ws.on('pong', heartbeat);
+
+  ws.on('message', function incoming(message) {
+//    console.log('received: %s', message);
+    if (message.startsWith("{")) {
+      obj = JSON.parse (message);
+      if (obj.command == 'subscribe') {
+        ws.channel = obj.channel;
+        ws.processId = obj.processId;
+      }
+      if (obj.command == 'startProcess') {
+        try {
+          (async (obj) => {
+            const data = await client.createWorkflowInstance(obj.ProcessKey, obj.variables);
+            console.log('Workflow instance started: ' + JSON.stringify(data));
+            ws.channel = 'Camunda';
+            ws.processId = data.workflowInstanceKey;
+            ws.send ('processId=' + data.workflowInstanceKey);
+            ws.send (JSON.stringify({message: 'startProcessResult', data: data}));
+          })(obj)
+        }
+        catch (error) {
+          console.error(error);
+          ws.send (JSON.stringify({message: 'startProcessError', data: error}));
+        }
+      }
+      if (obj.command == 'publishMessage') {
+        var processId = obj.processInstanceId;
+        if (processId == null && ws.processId) {
+          processId = ws.processId;
+        } 
+        if (obj.processInstanceId) {
+          ws.channel = 'Camunda';
+          ws.processId = obj.processInstanceId;
+        }
+        try {
+          (async (obj, processId) => {
+            await client.publishMessage({
+              correlationKey: processId,
+              name: obj.messageName,
+              variables: obj.processVariables,
+              timeToLive: 600000
+            });
+            ws.send (JSON.stringify({message: 'publishMessageResult', data: "Ok"}));
+          })(obj, processId)
+        }
+        catch (error) {
+          console.error(error);
+          ws.send (JSON.stringify({message: 'publishMessageError', data: error}));
+        }
+      }
+    }
+  });
+ 
+  ws.send('welcome');
+//  console.log ('welcome -> ws');
+});
+
+const interval = setInterval(function ping() {
+  wss.clients.forEach(function each(ws) {
+    if (ws.isAlive === false) return ws.terminate();
+ 
+    ws.isAlive = false;
+    ws.ping(noop);
+  });
+}, 30000);
+
+wss.on('close', function close() {
+  clearInterval(interval);
 });
 
 // For docker enviroment it catch docker compose down/restart commands
@@ -46,9 +132,18 @@ Object.keys(signals).forEach((signal) => {
   process.on(signal, () => {
     console.log(`Zeebe Node worker is shutdowning`);
     client.close().then(() => console.log('All workers closed'));
+
+    console.log(`Camunda Node WebSocket server is shutdowning`);
+    wss.clients.forEach(function each(ws) {
+      ws.terminate();
+    });
+    wss.close();
+    console.log(`Camunda Node WebSocket server stoped`);
+
     shutdown(signal, signals[signal]);
   });
 });
+
 
 async function main() {
   try {
@@ -61,7 +156,10 @@ async function main() {
   const zbWorker1 = client.createWorker({
 //    debug: true,
     taskType: tasktype,
-    taskHandler: router,
+    taskHandler: async (task, complete, worker) => {
+      //  console.log (JSON.stringify(task)); 
+      await router (task, complete, wss);
+    },
     failWorkflowOnException: false,
     maxJobsToActivate: 200,
     longPoll: Duration.minutes.of(2),

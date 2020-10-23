@@ -1,13 +1,17 @@
 const { paymentretrieval } = require ('./paymentretrieval.js');
+const { searchdomain } = require ('./search-domain.js');
 
-async function router(task, complete, worker) {
+async function router(task, complete, wss) {
   const { workflowInstanceKey, bpmnProcessId, elementId } = task;
 
 /*  console.log (JSON.stringify(task)); */
 
   switch (bpmnProcessId) {
   case 'payment-retrieval':
-    await paymentretrieval(task, complete, worker);
+    await paymentretrieval(task, complete, wss);
+    break;
+  case 'search-domain':
+    searchdomain(task, complete, wss);
     break;
   default:
     {

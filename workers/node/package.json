@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "dependencies": {
     "zeebe-node": "~0.24.0",
-    "zbctl": "~0.24.1",
     "express": "~4.17.1",
+    "ws": "~7.3.1",
     "axios": "~0.20.0",
-    "faker": "~5.1.0"
+    "faker": "~5.1.0",
+    "whois-json": "~2.0.4"
   }
 }
