@@ -78,13 +78,14 @@ wss.on('connection', function connection(ws, req) {
         }
         try {
           (async (obj, processId) => {
-            await client.publishMessage({
+            const mesdata = await client.publishMessage({
               correlationKey: processId,
               name: obj.messageName,
               variables: obj.processVariables,
-              timeToLive: 600000
+              timeToLive: 10000
             });
-            ws.send (JSON.stringify({message: 'publishMessageResult', data: "Ok"}));
+            console.log('Message delivered: ' + JSON.stringify(mesdata));
+            ws.send (JSON.stringify({message: 'publishMessageResult', data: mesdata}));
           })(obj, processId)
         }
         catch (error) {
@@ -215,7 +216,7 @@ async function publishMessage (req, res) {
       correlationKey: Key,
       name: messageName,
       variables: vars,
-      timeToLive: 600000
+      timeToLive: 10000
     });
     res.status(200).end(JSON.stringify({Result: 'OK'}));
   }
