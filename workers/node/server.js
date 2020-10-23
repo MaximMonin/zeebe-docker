@@ -158,7 +158,7 @@ async function main() {
 //    debug: true,
     taskType: tasktype,
     taskHandler: async (task, complete, worker) => {
-      //  console.log (JSON.stringify(task)); 
+//      console.log (JSON.stringify(task)); 
       await router (task, complete, wss);
     },
     failWorkflowOnException: false,
