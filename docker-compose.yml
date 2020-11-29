@@ -56,43 +56,47 @@ services:
       - ./cfg/application.yaml:/usr/local/zeebe/config/application.yaml:ro
       - /etc/localtime:/etc/localtime:ro
 
-#  node1:
-#    container_name: zeebe-broker-2
-#    image: camunda/zeebe:0.25.0
-#    restart: always
-#    environment:
-#      - ZEEBE_LOG_LEVEL=debug
-#      - ZEEBE_BROKER_CLUSTER_NODEID=1
-#      - ZEEBE_BROKER_GATEWAY_CLUSTER_HOST=gateway
-#      - ZEEBE_HAZELCAST_REMOTE_ADDRESS=hazelcast:5701
-#    networks:
-#      - zeebe_network
-#    depends_on:
-#      - node0
-#    volumes:
-#      - ./zeebe/node1:/usr/local/zeebe/data
-#      - ./cfg/zeebe-hazelcast-exporter.jar:/usr/local/zeebe/exporters/zeebe-hazelcast-exporter.jar:ro
-#      - ./cfg/application.yaml:/usr/local/zeebe/config/application.yaml:ro
-#      - /etc/localtime:/etc/localtime:ro
+  node1:
+    container_name: zeebe-broker-2
+    image: camunda/zeebe:0.25.0
+    restart: always
+    environment:
+      - ZEEBE_LOG_LEVEL=debug
+      - ZEEBE_BROKER_CLUSTER_NODEID=1
+      - ZEEBE_BROKER_GATEWAY_CLUSTER_HOST=gateway
+      - ZEEBE_BROKER_DATA_USEMMAP=true
+      - JAVA_OPTS=-Xmx4g -XX:MaxRAMPercentage=25.0 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/zeebe/data -XX:ErrorFile=/usr/local/zeebe/data/zeebe_error%p.log -XX:+ExitOnOutOfMemoryError
+      #- ZEEBE_HAZELCAST_REMOTE_ADDRESS=hazelcast:5701
+    networks:
+      - zeebe_network
+    depends_on:
+      - node0
+    volumes:
+      - ./zeebe/node1:/usr/local/zeebe/data
+      - ./cfg/zeebe-hazelcast-exporter.jar:/usr/local/zeebe/exporters/zeebe-hazelcast-exporter.jar:ro
+      - ./cfg/application.yaml:/usr/local/zeebe/config/application.yaml:ro
+      - /etc/localtime:/etc/localtime:ro
 
-#  node2:
-#    container_name: zeebe-broker-3
-#    image: camunda/zeebe:0.25.0
-#    restart: always
-#    environment:
-#      - ZEEBE_LOG_LEVEL=debug
-#      - ZEEBE_BROKER_CLUSTER_NODEID=2
-#      - ZEEBE_BROKER_GATEWAY_CLUSTER_HOST=gateway
-#      - ZEEBE_HAZELCAST_REMOTE_ADDRESS=hazelcast:5701
-#    networks:
-#      - zeebe_network
-#    depends_on:
-#      - node1
-#    volumes:
-#      - ./zeebe/node2:/usr/local/zeebe/data
-#      - ./cfg/zeebe-hazelcast-exporter.jar:/usr/local/zeebe/exporters/zeebe-hazelcast-exporter.jar:ro
-#      - ./cfg/application.yaml:/usr/local/zeebe/config/application.yaml:ro
-#      - /etc/localtime:/etc/localtime:ro
+  node2:
+    container_name: zeebe-broker-3
+    image: camunda/zeebe:0.25.0
+    restart: always
+    environment:
+      - ZEEBE_LOG_LEVEL=debug
+      - ZEEBE_BROKER_CLUSTER_NODEID=2
+      - ZEEBE_BROKER_GATEWAY_CLUSTER_HOST=gateway
+      - ZEEBE_BROKER_DATA_USEMMAP=true
+      - JAVA_OPTS=-Xmx4g -XX:MaxRAMPercentage=25.0 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/zeebe/data -XX:ErrorFile=/usr/local/zeebe/data/zeebe_error%p.log -XX:+ExitOnOutOfMemoryError
+      #- ZEEBE_HAZELCAST_REMOTE_ADDRESS=hazelcast:5701
+    networks:
+      - zeebe_network
+    depends_on:
+      - node1
+    volumes:
+      - ./zeebe/node2:/usr/local/zeebe/data
+      - ./cfg/zeebe-hazelcast-exporter.jar:/usr/local/zeebe/exporters/zeebe-hazelcast-exporter.jar:ro
+      - ./cfg/application.yaml:/usr/local/zeebe/config/application.yaml:ro
+      - /etc/localtime:/etc/localtime:ro
 
   worker-node:
     image: maximmonin/zeebe-worker-node
@@ -134,7 +138,7 @@ services:
 
   operate:
     container_name: zeebe-operate
-    image: camunda/operate:0.25.0-rc1
+    image: camunda/operate:0.25.0
     restart: always
     ports:
       - "2590:8080"

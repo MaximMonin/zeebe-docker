@@ -68,13 +68,13 @@ zeebe:
     cluster:
       # Specifies the Zeebe cluster size.
       # This can also be overridden using the environment variable ZEEBE_BROKER_CLUSTER_CLUSTERSIZE.
-      clusterSize: 1
+      clusterSize: 3
       # Controls the replication factor, which defines the count of replicas per partition.
       # This can also be overridden using the environment variable ZEEBE_BROKER_CLUSTER_REPLICATIONFACTOR.
-      replicationFactor: 1
+      replicationFactor: 3
       # Controls the number of partitions, which should exist in the cluster.
       # This can also be overridden using the environment variable ZEEBE_BROKER_CLUSTER_PARTITIONSCOUNT.
-      partitionsCount: 1
+      partitionsCount: 3
 
       initialContactPoints: [ node0:26502 ]
       membership:
