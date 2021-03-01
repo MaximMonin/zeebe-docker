@@ -135,7 +135,7 @@ services:
 
   operate:
     container_name: zeebe-operate
-    image: camunda/operate:0.26.0
+    image: camunda/operate:1.0.0-alpha1
     restart: always
     ports:
       - "2590:8080"
