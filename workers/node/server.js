@@ -164,7 +164,8 @@ async function main() {
     failWorkflowOnException: false,
     maxJobsToActivate: 200,
     longPoll: Duration.minutes.of(2),
-    timeout: timeout,
+    pollInterval: Duration.seconds.of (0.005),
+    timeout: Duration.seconds.of (timeout / 1000),
     loglevel: loglevel,
     onReady: () => console.log('Worker connected to ' + tasktype),
     onConnectionError: () => console.log('Worker disconnected from ' + tasktype)
